@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//4EBPTC//Conference 2027//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:4ebptc-2027@4ebptc.org.tr
+DTSTAMP:20261001T000000Z
+DTSTART;VALUE=DATE:20270916
+DTEND;VALUE=DATE:20270919
+SUMMARY:4th European Biblio/Poetry Therapy Conference (4EBPTC 2027)
+DESCRIPTION:Bridging Words\, Bridging Worlds. Two conference days (16-17 Sept) and a cultural day in Istanbul (18 Sept). https://4ebptc.org.tr
+LOCATION:Rami Library (Rami Kütüphanesi)\, Eyüpsultan\, Istanbul\, Türkiye
+URL:https://4ebptc.org.tr
+END:VEVENT
+END:VCALENDAR
