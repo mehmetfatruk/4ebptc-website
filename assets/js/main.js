@@ -2,17 +2,41 @@
 (function () {
   var toggle = document.querySelector('.nav-toggle');
   var nav = document.querySelector('.nav');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   if (toggle && nav) {
-    toggle.addEventListener('click', function () {
-      var open = nav.classList.toggle('open');
+    var setNav = function (open) {
+      nav.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    toggle.addEventListener('click', function () { setNav(!nav.classList.contains('open')); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && nav.classList.contains('open')) { setNav(false); toggle.focus(); }
+    });
+    document.addEventListener('click', function (e) {
+      if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== toggle) setNav(false);
     });
   }
 
   var here = location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav a').forEach(function (a) {
-    if (a.getAttribute('href') === here) a.classList.add('active');
+    if (a.getAttribute('href') === here) {
+      a.classList.add('active');
+      a.setAttribute('aria-current', 'page');
+    }
   });
+
+  // Shadow under the sticky menu bar and the back-to-top button
+  var navbar = document.querySelector('.navbar');
+  var toTop = document.querySelector('.to-top');
+  if (toTop) toTop.hidden = false;
+  var onScroll = function () {
+    var y = window.scrollY || window.pageYOffset;
+    if (navbar) navbar.classList.toggle('is-stuck', navbar.getBoundingClientRect().top <= 0 && y > 0);
+    if (toTop) toTop.classList.toggle('show', y > 600);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
   // Contact form: front-end only. Connect to a mail handler or form service before launch.
   var form = document.querySelector('#contact-form');
@@ -43,7 +67,11 @@
         creditEl.href = slides[current].getAttribute('data-url');
       }
     };
-    var restart = function () { clearInterval(timer); timer = setInterval(function () { show(current + 1); }, 7000); };
+    var restart = function () {
+      clearInterval(timer);
+      if (!reduceMotion && !document.hidden) timer = setInterval(function () { show(current + 1); }, 7000);
+    };
+    document.addEventListener('visibilitychange', restart);
     slides.forEach(function (s, i) {
       var b = document.createElement('button');
       b.type = 'button'; b.setAttribute('aria-label', 'Photo ' + (i + 1));
@@ -58,7 +86,7 @@
   // Intro overlay (home page, once per browser session)
   var intro = document.getElementById('intro');
   if (intro && !intro.hidden) {
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var reduce = reduceMotion;
     // split slogan lines into letters
     intro.querySelectorAll('[data-split]').forEach(function (p) {
       var text = p.textContent; p.textContent = '';
@@ -120,6 +148,49 @@
     setTimeout(finish, reduce ? 1500 : 4300);
     document.getElementById('intro-skip').addEventListener('click', finish);
     intro.addEventListener('click', function (e) { if (e.target === intro) finish(); });
+  }
+
+  // Countdown to the opening day (home banner)
+  var cd = document.querySelector('[data-countdown]');
+  if (cd) {
+    var target = new Date(cd.getAttribute('data-countdown')).getTime();
+    var parts = { d: cd.querySelector('[data-cd="d"]'), h: cd.querySelector('[data-cd="h"]'), m: cd.querySelector('[data-cd="m"]') };
+    var tick = function () {
+      var diff = target - Date.now();
+      if (!(diff > 0)) { cd.hidden = true; return false; }
+      parts.d.textContent = Math.floor(diff / 864e5);
+      parts.h.textContent = Math.floor(diff / 36e5) % 24;
+      parts.m.textContent = Math.floor(diff / 6e4) % 60;
+      cd.hidden = false;
+      return true;
+    };
+    if (tick()) setInterval(tick, 30000);
+  }
+
+  // Video: load the embedded player only when the visitor asks for it
+  document.querySelectorAll('.video[data-video]').forEach(function (box) {
+    var btn = box.querySelector('.video-play');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = box.getAttribute('data-video');
+      f.title = 'Conference video';
+      f.allow = 'autoplay; fullscreen; picture-in-picture';
+      f.allowFullscreen = true;
+      box.replaceChild(f, btn);
+    });
+  });
+
+  // Gentle reveal of content blocks as they scroll into view
+  if ('IntersectionObserver' in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.series > *, .partner, .speaker, .cols > *, .video, .venue-block').forEach(function (el) {
+      if (el.getBoundingClientRect().top > window.innerHeight) { el.classList.add('reveal'); io.observe(el); }
+    });
   }
 
   var y = document.querySelector('[data-year]');

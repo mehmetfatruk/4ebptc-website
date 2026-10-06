@@ -13,7 +13,10 @@ src/pages/*.html                 -> sayfa içerikleri (ilk iki satır: TITLE: / 
 assets/css/style.css             -> tek stil dosyası
 assets/js/main.js                -> mobil menü, aktif menü, iletişim formu
 assets/img/logo.svg              -> geçici metin logosu
+assets/img/*.webp                -> JPG görsellerin WebP sürümleri (tarayıcı destekliyorsa bunlar yüklenir)
+assets/img/og-image.jpg          -> sosyal medya paylaşım görseli (1200×630)
 assets/4ebptc-2027.ics           -> takvim dosyası
+sitemap.xml, robots.txt          -> arama motorları için
 build.sh / build.ps1             -> derleme betikleri
 ```
 
@@ -25,6 +28,12 @@ bash build.sh        # Git Bash
 ```
 
 Derleme sonucu kök dizindeki `*.html` dosyaları ve `assets/` klasörü herhangi bir statik barındırmaya (cPanel, GitHub Pages, Netlify vb.) olduğu gibi yüklenir. Sunucu tarafı gerektirmez.
+
+Yeni bir JPG eklenirse WebP sürümü de üretilmelidir (ör. `cwebp -q 78 foto.jpg -o foto.webp`).
+
+## Tanıtım videosu
+
+Ana sayfadaki "Conference video" bölümü Google Drive'daki videoyu gösterir (dosya kimliği `1_vs_Vn3goblQFjbdMciKoBcdOHjapA57`, `src/pages/index.html`). Oynatıcı yalnızca ziyaretçi tıkladığında yüklenir. Videonun oynaması için Drive'da paylaşım ayarı **"Bağlantıya sahip olan herkes – Görüntüleyen"** olmalıdır. İleride YouTube/Vimeo'ya taşınırsa `data-video` adresi değiştirilmesi yeterlidir.
 
 ## Sayfalar
 
