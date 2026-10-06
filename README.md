@@ -35,6 +35,21 @@ Yeni bir JPG eklenirse WebP sürümü de üretilmelidir (ör. `cwebp -q 78 foto.
 
 Ana sayfadaki "Conference video" bölümü Google Drive'daki videoyu gösterir (dosya kimliği `1_vs_Vn3goblQFjbdMciKoBcdOHjapA57`, `src/pages/index.html`). Oynatıcı yalnızca ziyaretçi tıkladığında yüklenir. Videonun oynaması için Drive'da paylaşım ayarı **"Bağlantıya sahip olan herkes – Görüntüleyen"** olmalıdır. İleride YouTube/Vimeo'ya taşınırsa `data-video` adresi değiştirilmesi yeterlidir.
 
+## Yayın (GitHub Pages)
+
+`main` dalına yapılan her push'ta `.github/workflows/pages.yml` siteyi `src/` içinden derler ve GitHub Pages'e yükler. İş akışı Actions sekmesinden "Run workflow" ile elle de başlatılabilir. Yayına yalnızca derlenmiş `*.html` dosyaları, `assets/`, `robots.txt` ve `sitemap.xml` gider; `src/`, derleme betikleri ve README gitmez.
+
+Tek seferlik ayar: depoda **Settings → Pages → Build and deployment → Source: "GitHub Actions"** seçilir.
+
+Adres: https://mehmetfatruk.github.io/4ebptc-website/
+
+Alan adı alındığında:
+1. **Settings → Pages → Custom domain** alanına `4ebptc.org.tr` yazılır.
+2. Alan adının DNS kayıtlarına GitHub Pages IP'lerine (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153) giden `A` kayıtları ve `www` için `mehmetfatruk.github.io` `CNAME` kaydı eklenir.
+3. DNS doğrulandıktan sonra **Enforce HTTPS** işaretlenir.
+
+Sayfalardaki canonical ve paylaşım (og:) adresleri zaten `https://4ebptc.org.tr/` olarak yazılıdır.
+
 ## Sayfalar
 
 Home · About · Call for Papers · Important Dates · Programme · Keynote Speakers · Committees · Registration · Venue & Travel · Contact · Privacy Notice (KVKK/GDPR)
